@@ -152,7 +152,8 @@ public class assignment_crud_methods {
             if (!sc.hasNextInt()) {
                 System.out.println("Invalid Employee ID! Only numbers are allowed.");
                 sc.next();
-                return;}
+                return;
+            }
 
             int empId = sc.nextInt();
 
