@@ -1,0 +1,3 @@
+Employee ID: 100
+Employee Name: Prawin
+Salary: 20000

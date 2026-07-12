@@ -1,0 +1,13 @@
+{
+    "java.project.sourcePaths": [
+        ".",
+        "JDBC_Demo",
+        "New folder",
+        "Week1",
+        "Week2",
+        "Weekly Task"
+    ],
+    "java.project.referencedLibraries": [
+        "lib\\mysql-connector-j-9.7.0.jar"
+    ]
+}
