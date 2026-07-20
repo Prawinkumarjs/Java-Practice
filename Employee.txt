@@ -1,4 +1,3 @@
-Employee ID: 101
-Employee Name: Sam
-Salary: 50000
-hi da..
+100 prawin it adm 60000.0
+101 sethu it hr 88888.0
+102 pavi it hr 98764.0
