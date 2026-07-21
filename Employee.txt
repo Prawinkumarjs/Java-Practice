@@ -1,3 +1,7 @@
 100 prawin it adm 60000.0
 101 sethu it hr 88888.0
 102 pavi it hr 98764.0
+103 raja network dev 60000.0
+104 Raj IT developer 80000.0
+105 Sam Hr adm 45000.0
+106 Ram It Trainee 25000.0

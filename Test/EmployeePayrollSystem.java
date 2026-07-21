@@ -175,8 +175,7 @@ class EmployeeDAO {
 
     try {
 
-        String query =
-        "UPDATE employee SET salary=? WHERE empId=?";
+        String query = "UPDATE employee SET salary=? WHERE empId=?";
 
 
         PreparedStatement ps =
@@ -211,8 +210,7 @@ class EmployeeDAO {
 
     try {
 
-        String query =
-        "DELETE FROM employee WHERE empId=?";
+        String query = "DELETE FROM employee WHERE empId=?";
 
 
         PreparedStatement ps =
@@ -246,8 +244,7 @@ class EmployeeDAO {
 
     try {
 
-        String query =
-        "SELECT * FROM employee ORDER BY empName";
+        String query = "SELECT * FROM employee ORDER BY empName";
 
 
         Statement st = con.createStatement();
@@ -279,8 +276,7 @@ class EmployeeDAO {
 
     try {
 
-        String query =
-        "SELECT * FROM employee ORDER BY salary DESC";
+        String query = "SELECT * FROM employee ORDER BY salary ASC";
 
 
         Statement st = con.createStatement();
@@ -314,15 +310,10 @@ class EmployeeDAO {
 
         Statement st = con.createStatement();
 
-        ResultSet rs =
-        st.executeQuery("SELECT * FROM employee");
+        ResultSet rs = st.executeQuery("SELECT * FROM employee");
 
 
-        BufferedWriter bw =
-        new BufferedWriter(
-        new FileWriter("employee.txt"));
-
-
+        BufferedWriter bw = new BufferedWriter(new FileWriter("employee.txt"));
         while(rs.next()) {
 
             bw.write(
