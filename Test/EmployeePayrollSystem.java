@@ -1,15 +1,14 @@
 package Test;
-
 import java.util.*;
 import java.sql.*;
 import java.io.*;
 
-class Employee {
-    int empId;
-    String empName;
-    String department;
-    String designation;
-    double salary;
+class Employee implements Comparable<Employee> {
+    private int empId;
+    private String empName;
+    private String department;
+    private String designation;
+    private double salary;
 
     Employee(int empId, String empName,
              String department,
@@ -22,132 +21,122 @@ class Employee {
         this.designation = designation;
         this.salary = salary;
     }
+        public int getEmpId() {
+        return empId;
+    }
+
+    public String getEmpName() {
+        return empName;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    @Override
+    public int compareTo(Employee e) {
+        return this.empName.compareToIgnoreCase(e.empName);
+    }
+
+}
+
+class SalaryComparator implements Comparator<Employee> {
+
+    @Override
+    public int compare(Employee e1, Employee e2) {
+        return Double.compare(e1.getSalary(), e2.getSalary());
+        }
 }
 
 class DBConnection {
-
     static Connection con;
-
 static Connection getConnection() {
-
     try {
-
         Class.forName("com.mysql.cj.jdbc.Driver");
-
         con = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/abctechnologies",
                 "root",
                 "root");
-
         System.out.println("Database Connected");
-
     }
     catch(Exception e) {
-
         System.out.println("Database Connection Failed");
         e.printStackTrace();
-
     }
-
     return con;
 }
 }
-
 class EmployeeDAO {
-
-    void registerEmployee(Employee emp) {
-
+void registerEmployee(Employee emp) {
     Connection con = DBConnection.getConnection();
-
-    try {
-
-        String query = "INSERT INTO employee VALUES(?,?,?,?,?)";
-
-        PreparedStatement ps = con.prepareStatement(query);
-
-        ps.setInt(1, emp.empId);
-        ps.setString(2, emp.empName);
-        ps.setString(3, emp.department);
-        ps.setString(4, emp.designation);
-        ps.setDouble(5, emp.salary);
-
-        int result = ps.executeUpdate();
-
-        if(result > 0) {
-            System.out.println("Employee Registered Successfully");
+    try { 
+        String checkQuery = "SELECT * FROM employee WHERE empId = ?";
+        PreparedStatement checkPs = con.prepareStatement(checkQuery);
+        checkPs.setInt(1, emp.getEmpId());
+        ResultSet rs = checkPs.executeQuery();
+        if(rs.next()) {
+            System.out.println("Employee ID already exists.");
+            return;
         }
-
-    }
-    catch(SQLException e) {
-
+        String query = "INSERT INTO employee VALUES(?,?,?,?,?)";
+        PreparedStatement ps = con.prepareStatement(query);
+        ps.setInt(1, emp.getEmpId());
+        ps.setString(2, emp.getEmpName());
+        ps.setString(3, emp.getDepartment());
+        ps.setString(4, emp.getDesignation());
+        ps.setDouble(5, emp.getSalary());
+        ps.executeUpdate();
+        System.out.println("Employee Registered Successfully");
+    } catch(SQLException e) {
         System.out.println(e);
     }
-
+    
 }
 
     void viewEmployees() {
-
     Connection con = DBConnection.getConnection();
-
     try {
-
         String query = "SELECT * FROM employee";
-
         Statement st = con.createStatement();
-
         ResultSet rs = st.executeQuery(query);
-
-
         boolean found = false;
-
-
         while(rs.next()) {
-
             found = true;
-
             System.out.println("----------------------------");
             System.out.println("Employee ID : " + rs.getInt(1));
             System.out.println("Employee Name : " + rs.getString(2));
             System.out.println("Department : " + rs.getString(3));
             System.out.println("Designation : " + rs.getString(4));
             System.out.println("Salary : " + rs.getDouble(5));
-
         }
-
-
         if(!found) {
             System.out.println("No Employee Records Found");
         }
-
-
     }
     catch(SQLException e) {
-
         System.out.println(e);
-
     }
-
 }
 
+
     void searchEmployee(int id) {
-
     Connection con = DBConnection.getConnection();
-
     try {
 
         String query = "SELECT * FROM employee WHERE empId=?";
-
         PreparedStatement ps = con.prepareStatement(query);
-
         ps.setInt(1,id);
-
         ResultSet rs = ps.executeQuery();
-
-
         if(rs.next()) {
-
             System.out.println("Employee Found");
-
             System.out.println("Name : "+rs.getString(2));
             System.out.println("Department : "+rs.getString(3));
             System.out.println("Designation : "+rs.getString(4));
@@ -155,191 +144,139 @@ class EmployeeDAO {
 
         }
         else {
-
             System.out.println("Employee Not Found");
-
         }
 
     }
     catch(SQLException e) {
-
         System.out.println(e);
-
     }
 
 }
 
     void updateSalary(int id,double salary) {
-
     Connection con = DBConnection.getConnection();
-
     try {
-
         String query = "UPDATE employee SET salary=? WHERE empId=?";
-
-
         PreparedStatement ps =
         con.prepareStatement(query);
-
-
         ps.setDouble(1,salary);
         ps.setInt(2,id);
-
-
         int result = ps.executeUpdate();
-
-
         if(result>0)
             System.out.println("Salary Updated Successfully");
         else
             System.out.println("Employee Not Found");
-
-
     }
     catch(SQLException e) {
-
         System.out.println(e);
-
     }
-
 }
 
+
     void deleteEmployee(int id) {
-
     Connection con = DBConnection.getConnection();
-
     try {
-
         String query = "DELETE FROM employee WHERE empId=?";
-
-
         PreparedStatement ps =
         con.prepareStatement(query);
-
-
         ps.setInt(1,id);
-
-
         int result = ps.executeUpdate();
-
-
         if(result>0)
             System.out.println("Employee Deleted Successfully");
         else
             System.out.println("Employee Not Found");
 
-
     }
     catch(SQLException e) {
-
         System.out.println(e);
-
     }
-
 }
 
     void sortByName() {
-
     Connection con = DBConnection.getConnection();
-
     try {
-
-        String query = "SELECT * FROM employee ORDER BY empName";
-
-
+        String query = "SELECT * FROM employee";
         Statement st = con.createStatement();
-
         ResultSet rs = st.executeQuery(query);
-
-
+        ArrayList<Employee> list = new ArrayList<>();
         while(rs.next()) {
+            Employee emp = new Employee(rs.getInt(1),
+                                        rs.getString(2),
+                                        rs.getString(3),
+                                        rs.getString(4),
+                                        rs.getDouble(5));
 
-            System.out.println(
-            rs.getInt(1)+" "+
-            rs.getString(2)+" "+
-            rs.getDouble(5));
-
+            list.add(emp);
         }
+        Collections.sort(list);
+        for(Employee emp : list) {
+
+            System.out.println(emp.getEmpId() + " " +
+                               emp.getEmpName() + " " +
+                               emp.getSalary());
+        }
+
 
     }
     catch(SQLException e) {
-
         System.out.println(e);
-
     }
 
 }
 
     void sortBySalary() {
-
     Connection con = DBConnection.getConnection();
-
     try {
-
-        String query = "SELECT * FROM employee ORDER BY salary ASC";
-
-
+        String query = "SELECT * FROM employee";
         Statement st = con.createStatement();
-
         ResultSet rs = st.executeQuery(query);
-
-
+        ArrayList<Employee> list = new ArrayList<>();
         while(rs.next()) {
-
+            Employee emp = new Employee(
+                rs.getInt(1),
+                rs.getString(2),
+                rs.getString(3),
+                rs.getString(4),
+                rs.getDouble(5));
+            list.add(emp);
+        }
+        Collections.sort(list, new SalaryComparator());
+        for(Employee emp : list) {
             System.out.println(
-            rs.getString(2)+" "+
-            rs.getDouble(5));
-
+                emp.getEmpId() + " " +
+                emp.getEmpName() + " " +
+                emp.getSalary()
+            );
         }
 
     }
     catch(SQLException e) {
-
         System.out.println(e);
-
     }
-
 }
 
     void exportToFile() {
-
     Connection con = DBConnection.getConnection();
-
-
     try {
-
         Statement st = con.createStatement();
-
         ResultSet rs = st.executeQuery("SELECT * FROM employee");
-
-
         BufferedWriter bw = new BufferedWriter(new FileWriter("employee.txt"));
         while(rs.next()) {
-
             bw.write(
             rs.getInt(1)+" "+
             rs.getString(2)+" "+
             rs.getString(3)+" "+
             rs.getString(4)+" "+
             rs.getDouble(5));
-
             bw.newLine();
-
         }
-
-
         bw.close();
-
         System.out.println("Data Exported Successfully");
-
-
     }
     catch(Exception e) {
-
         System.out.println(e);
-
     }
-
 }
 }
 
@@ -433,9 +370,7 @@ public class EmployeePayrollSystem {
                     }
 
                     Employee emp = new Employee(id, name, department, designation, salary);
-
                     dao.registerEmployee(emp);
-
                     break;
 
                 case 2:
@@ -468,21 +403,27 @@ public class EmployeePayrollSystem {
                 case 5:
 
                     System.out.print("Enter Employee ID : ");
-                    int deleteId=Integer.parseInt(sc.nextLine());
+                    int deleteId = Integer.parseInt(sc.nextLine());
 
-                    dao.deleteEmployee(deleteId);
+                    System.out.print("Are you sure you want to delete? (Y/N): ");
+                    String confirm = sc.nextLine();
+
+                    if(confirm.equalsIgnoreCase("Y")) {
+                        dao.deleteEmployee(deleteId);
+                    }
+                    else {
+                        System.out.println("Deletion Cancelled");
+                    }
 
                     break;
 
 
                 case 6:
-
                     dao.sortByName();
                     break;
 
 
                 case 7:
-
                     dao.sortBySalary();
                     break;
                 case 8:
